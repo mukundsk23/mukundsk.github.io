@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <meta name="description" content="Personal Portfolio">
+	  <meta name="keywords" content="data science, data analytics, visualization, visualisation">
+  	<meta name="Mukund" content="Mukund's Portfolio">
+    <title>Python | Deep Learning</title>
+    <link rel="stylesheet" href="./css/style.css">
+  </head>
+  <body>
+    <header>
+      <div class="container">
+        <div id="branding">
+          <h1><span class="highlight">Deep Learning Project</span></h1>
+        </div>
+        <nav>
+          <ul>
+            <br><li class="current"><a href="Used_Car_Prices_CSV.html">Click here for machine learning code</a></li>
+            <br><li class="current"><a href="DamagedUn-damaged Binary-Classification.html">Click here for binary classclassifier code</a></li>
+            <br><li class="current"><a href="Car_Damage_Multi-Classification.html">Click here for machine multi-class classifier code</a></li> 
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+
+    <section id="newsletter">
+      <div class="container">
+        <h1>Problem Statement: 
+            <br>We want all the cars to undergo strict and unbiased inspection and set a justifiable price so that the customer satisfaction is maintained, while still maintaining a profit margin. 
+<br>            <br>Statement:<br> Today we have many sales, wherein the companies make huge profit for the sale while the average consumer feels cheated. If we ignore this problem, not only will it give the business a bad reputation but also affect the revenue in the long run. 
+    <br>        <br>Method: <br>We will use Deep Learning Models to check the car for damages and Machine Learning models to estimate a price for the same. Using these sound Data Science principles, we plan to overcome this hurdle </h1><br>      
+    </div>        
+    </section>
+
+    <section id="boxes">
+      <div class="container">
+          <h2>Data Overview</h2>
+
+          <p> <h3>Image data</h3>
+             The image data consists of 1524 images which are classified in 5 classes and divided into train (80%) and test (20%) for predicting if the car in the image is undamaged or damaged and the type of damage. <br>
+            <br><h3>Image Data Cleaning</h3> 
+            Originally the dataset contained total 2035 images. For cleaning the data, the images with watermarks have been removed from the dataset because running a complex Convolutional Neural Network model on such data led to misclassification and the text in the watermark is unnecessary data. After removing the unwanted images, the dataset size reduced to 1524 and the prediction accuracy improved significantly. 
+            
+            <br>
+            <h3>Used cars data in CSV </h3>
+            The used cars data is obtained from various web sources in order to explore the used cars market and try to build a model that effectively predicts the price of the car based on its parameters (both numerical and categorical). It contains 37,680 advertisement records/rows in a structured way in order to explore and build models along with 25 features as follows where the target attribute is ‘price_usd’. 
+ </p>
+ 
+        <h3>CSV columns/Knowing the variables</h3>
+          <img src="./images/deep-learning/linear-reg-columns.PNG" alt="Dataframe columns" width="850" height="600">    
+
+          <br>
+
+        <h2>Exploratory Data Analysis </h2>
+        <h3>CSV data</h3>
+        <img src="./images/deep-learning/histo-price-usd.PNG" alt="Dataframe columns" width="900" height="500">   
+        <img src="./images/deep-learning/boxplot-corr.PNG" alt="Dataframe columns" width="850" height="600">   
+        <p> When we look at the histogram of the target variable ‘price_usd’, it can be said that the data is highly 
+            skewed on the positive side. The boxplot of target variable ‘price_usd’ shows the Minimum ($1), 
+            Maximum ($50,000), Q1 ($2,250), Q2/ Median ($4,900), Q3 ($9,000), Lower bound ($1), Upper bound ($19,112). 
+            From the correlation of the price_usd with every other feature show that predicting the price of used cars 
+            is most correlated with the year when it was produced, the older the car, the more it affects the price. 
+            Similarly, price of the car reduces as the odometer values (distance traveled in Kilometers) increases. 
+</p> 
+ 
+<h2>Approach</h2>
+<p>
+The idea is to take the images of cars taken from various angles and distance as input and make predictions on the 
+damage present in the car image. To work on the problem statement effectively, the set milestones to achieve along 
+with accurate predictions. These levels helped us to focus on issues that came with the dataset i.e. feature engineering,
+ overfitting, inaccurate predictions. The levels of the project are as follows:<br>
+  1. Level 0: Used Cars Price Prediction: Linear Regression, Decision Tree Regressor, Random Forest Regressor, 
+  Stochastic Gradient Descent Regressor <br>
+  2. Level 1: Binary classifier – classify if the car is damaged or not with 104 images (80 + 24) 
+  <br>3. Level 2: Binary classifier – entire dataset (1218 + 306) 
+  <br>4. Level 3: Five-class classifier – classify with entire dataset (1218 + 306)
+</p>        
+      </div>
+      <section id='boxes'>
+<div class="container">
+
+    <h2>Data Modeling</h2>
+    <h3> Level 0 : Price Prediction of Used cars</h3>
+     <h4>Preprocessing</h4>
+     <p> For cleaning the csv file, 5 attributes are dropped due to existence of special characters in foreign language. Using forward fill method, null values for all the variables have been removed. An attribute called ‘engine_fuel’ consisted of two values having the same meaning (‘gas’ and ‘gasoline’). Hence, ‘gasoline’ has been replaced with ‘gas’. To perform stratified split, the bins are created on the target feature as it contains unique values. Used column transfer, to encode categorical features and scale numerical features by building a pipeline and applied to the train and test data.  </p>
+     
+     
+     <h4>Models Used</h4>
+     <p> We ran various regression models on the cleaned and manipulated data in order to predict the target attribute ‘price_usd’ using 24 independent variables and 37,679 records. RMSE Since large errors are undesirable and we want to penalize the effect of large errors, RMSE has been used as an evaluation metric. Built simple models for linear, decision tree and random forest regression</p>
+
+     <h4>Comparing the RMSEs of each model</h4>
+     <p> As we compare the models, it can be said that the SGD Regression model has the lowest RMSE relative to other models.</p>
+ 
+     <img src="./images/deep-learning/rmse-models.PNG" alt="Dataframe columns" width="400" height="200"> 
+
+     <h3>Level 1: Binary Image Classifier - CNN (104 images)</h3>
+     <p> The objective of this model is to classify a sampled dataset of 104 images into two classes – Damaged and Undamaged. The data is divided as follows: </p>
+ 
+     <img src="./images/deep-learning/split-of-data.PNG" alt="Dataframe columns" width="300" height="100"> 
+
+     <h4>Model Used</h4>
+     <p> We ran a Convolutional Neural Network with 256 nodes. 
+         Implementing max pooling reduced the nodes to 128 which is then flattened and densed into output node. <br>
+         <img src="./images/deep-learning/model-param.PNG" alt="Dataframe columns" width="700" height="400"> 
+</p>
+<h3>Level 2: Binary Image Classifier - CNN (2300 images)</h3>
+<p> Increasing the dataset to 2,300 images for the above-mentioned Binary Classifier to verify the accuracy of the model.</p>
+<img src="./images/deep-learning/bin-classifier.PNG" alt="Dataframe columns" width="300" height="100"> 
+<h3>Binary Classifier Predictions: </h3>
+<img src="./images/deep-learning/bin-pred.PNG" alt="bin-pred" width="700" height="350"> 
+
+<h3>Level 3: Multi-Class Image Classifier – CNN (1524 images) </h3>
+<p>Once being able to classify images of cars into two class, we implemented a Multi Image Classifier Convolutional Neural Network Model on 1524 images as follows: </p>
+<img src="./images/deep-learning/multi-class.PNG" alt="multi-class" width="300" height="175"> 
+
+
+
+<h4>Model Used</h4> 
+<p> We ran a CNN model with 256 nodes to start. In each layer MaxPooling is implemented to reduce the nodes to 128, 64 and then 32. These nodes are flattened and then densed into 5 output nodes, one node for each class.</p>
+
+<img src="./images/deep-learning/seq_10.PNG" alt="multi-class" width="700" height="400"> 
+
+
+<h3>Accuracy Plots</h3>
+<p> As it can be seen from the plot, the model accuracy increases after every epoch for both train and test data. The model achieves maximum of 87.14% accuracy on test data. Also, the loss on both train and test data decreases after every epoch. </p>
+<img src="./images/deep-learning/model-accuracy.PNG" alt="multi-class" width="700" height="400"> 
+<img src="./images/deep-learning/model-loss.PNG" alt="multi-class" width="700" height="400"> 
+
+<h3>Predictions</h3>
+<p>It can be seen from the sample predictions that the model is able to classify the damage with good accuracy. In the images below, the model predicts Scratch on the car, damages on the lamp and an undamaged car. Although, the accuracy of model is good, there are some images that are being misclassified as undamaged. The reason behind might be the higher number of images in the undamaged class than other four classes. </p>
+<img src="./images/deep-learning/background12.jpg" alt="multi-class" width="700" height="700"> 
+</div>
+
+
+
+      </section>
+
+    <footer>
+      <p>Thanks for reading my blog post</p>
+    </footer>
+  </body>
+</html>
