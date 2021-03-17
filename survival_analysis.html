@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <meta name="description" content="Personal Portfolio">
+      <meta name="keywords" content="data science, data analytics, visualization, visualisation">
+    <meta name="Mukund" content="Mukund's Portfolio">
+    <title>R | Stat</title>
+    <link rel="stylesheet" href="./css/style.css">
+  </head>
+  <body>
+    <header>
+      <div class="container">
+        <div id="branding">
+          <h1><span class="highlight">Survival Model in R</span></h1>
+        </div>
+        <nav>
+          <ul>
+            <li class="current"><a href="survival_model_code.html">Click here for code</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+
+    <section id="newsletter">
+      <div class="container">
+
+
+
+
+        <h1>Goal : This dataset contains data from a Veteran's Administration Lung Cancer Trial, where 137 patients with advanced, inoperable lung cancer were treated with chemotherapy (standard treatment) vs chemotherapy combined with a new drug (test treatment). <br>
+
+        1. Plot the Kaplan-Meier survival graphs for patients with the test vs standard treatment. Use this data to assess:
+<br>
+        a. What is the probability that the patient will survive for 1 year (365 days) and 6 months (183 days) on the standard treatment vs the test treatment?
+<br>
+        b. What is the mean number of days where a patient can be expected to survive if they are on the standard vs the test treatment.
+<br>
+        2. Create three semi-parametric and parametric models to estimate the marginal effects of relevant predictors on survival outcomes. Interpret the coefficients of these models to explain the precise effects of age and months of diagnosis on survival probabilities of patients with standard and test treatments.
+        </h1>
+
+    
+    </section>
+
+    <section id="boxes">
+      <div class="container">
+        
+          
+          <h3>Knowing the variables</h3>
+          <p>
+             a. treatment            : a categorical variable where 1 is the standard group and 2 is for test group i.e. patients who were given a test drug <br>
+             b. cell_type            : 4 categories of cells 1=squamous, 2=small cell, 3=adeno, 4=large <br>
+             c. survival             : Survival in days<br>
+             d. status               : Status of patient 1=dead, 0=censored<br>
+             e. karnofsky_score      : measure of patients general performance, 100=best, 0=poor<br>
+             f. months_from_diagnosis: Months after diagnosis<br>
+             g. age                  : Patients age in years<br>
+             h. prev_chemo           : Categorical variable for patients whether they have taken ant chemotherapy previously
+              0=no, 10=yes<br>
+            </p>
+          
+          <h3>Analysis</h3>
+          <p>
+              Gaining insight from data </p>
+<br>
+<p>summary for survival</p>
+<table>
+<tbody>
+<tr>
+<td>Minimum</td>
+<td>1st quadrant</td>
+<td>Median</td>
+<td>Mean</td>
+<td>3rd quadrant</td>
+<td>Maximum</td>
+</tr>
+<tr>
+<td>1.0</td>
+<td>25.0</td>
+<td>80.0</td>
+<td>121.6</td>
+<td>144.0</td>
+<td>999.0</td>
+</tr>
+</tbody>
+</table>
+
+<p>Distribution of treatment</p>
+<table>
+<tbody>
+<tr>
+<td>Dead</td>
+<td>Censored</td>
+</tr>
+<tr>
+<td>9</td>
+<td>128</td>
+</tr>
+</tbody>
+</table>
+
+<p>Distribution of status of patients</p>
+<table>
+<tbody>
+<tr>
+<td>Standard group</td>
+<td>,Test group</td>
+</tr>
+<tr>
+<td>69</td>
+<td>68</td>
+</tr>
+</tbody>
+</table>
+
+<p>Distribution of cancer types among of patients</p>
+<p> 1=squamous, 2=small cell, 3=adeno, 4=large</p>
+
+<table>
+<tbody>
+<tr>
+<td>1 Squamous cells</td>
+<td>,2 Small cells</td>
+<td>,3 Adeno cells</td>
+<td>,4 Large cells</td>
+</tr>
+<tr>
+<td>35</td>
+<td>48</td>
+<td>27</td>
+<td>27</td>
+</tr>
+</tbody>
+</table>
+
+
+<p>Distribution of previous chemotherapy of patients</p>
+<table>
+<tbody>
+<tr>
+<td>No previous chemo</td>
+<td>Yes previous chemo</td>
+</tr>
+<tr>
+<td>97</td>
+<td>40</td>
+</tr>
+</tbody>
+</table>
+
+
+</div>
+
+</section>
+<div class="container">
+<h3> Survival probability at 1 year (365 days) on standard vs test treatment </h3>
+
+
+<pre><code>Call: survfit(formula = Surv(survival, status) ~ treatment, data = d)
+ 
+                 treatment=1 
+  time n.risk n.event survival std.err lower 95% CI upper 95% CI
+     3     69       1   0.9855  0.0144      0.95771        1.000
+     4     68       1   0.9710  0.0202      0.93223        1.000
+     7     67       1   0.9565  0.0246      0.90959        1.000
+     8     66       2   0.9275  0.0312      0.86834        0.991
+    10     64       2   0.8986  0.0363      0.83006        0.973
+    11     62       1   0.8841  0.0385      0.81165        0.963
+    12     61       2   0.8551  0.0424      0.77592        0.942
+    13     59       1   0.8406  0.0441      0.75849        0.932
+    16     58       1   0.8261  0.0456      0.74132        0.921
+    18     57       2   0.7971  0.0484      0.70764        0.898
+    20     55       1   0.7826  0.0497      0.69109        0.886
+    21     54       1   0.7681  0.0508      0.67472        0.874
+    22     53       1   0.7536  0.0519      0.65851        0.862
+    27     51       1   0.7388  0.0529      0.64208        0.850
+    30     50       1   0.7241  0.0539      0.62580        0.838
+    31     49       1   0.7093  0.0548      0.60967        0.825
+    35     48       1   0.6945  0.0556      0.59368        0.812
+    42     47       1   0.6797  0.0563      0.57782        0.800
+    51     46       1   0.6650  0.0570      0.56209        0.787
+    52     45       1   0.6502  0.0576      0.54649        0.774
+    54     44       2   0.6206  0.0587      0.51565        0.747
+    56     42       1   0.6059  0.0591      0.50040        0.734
+    59     41       1   0.5911  0.0595      0.48526        0.720
+    63     40       1   0.5763  0.0598      0.47023        0.706
+    72     39       1   0.5615  0.0601      0.45530        0.693
+    82     38       1   0.5467  0.0603      0.44049        0.679
+    92     37       1   0.5320  0.0604      0.42577        0.665
+    95     36       1   0.5172  0.0605      0.41116        0.651
+   100     34       1   0.5020  0.0606      0.39615        0.636
+   103     32       1   0.4863  0.0607      0.38070        0.621
+   105     31       1   0.4706  0.0608      0.36537        0.606
+   110     30       1   0.4549  0.0607      0.35018        0.591
+   117     29       2   0.4235  0.0605      0.32017        0.560
+   118     27       1   0.4079  0.0602      0.30537        0.545
+   122     26       1   0.3922  0.0599      0.29069        0.529
+   126     24       1   0.3758  0.0596      0.27542        0.513
+   132     23       1   0.3595  0.0592      0.26031        0.496
+   139     22       1   0.3432  0.0587      0.24535        0.480
+   143     21       1   0.3268  0.0582      0.23057        0.463
+   144     20       1   0.3105  0.0575      0.21595        0.446
+   151     19       1   0.2941  0.0568      0.20151        0.429
+   153     18       1   0.2778  0.0559      0.18725        0.412
+   156     17       1   0.2614  0.0550      0.17317        0.395
+   162     16       2   0.2288  0.0527      0.14563        0.359
+   177     14       1   0.2124  0.0514      0.13218        0.341
+   200     12       1   0.1947  0.0501      0.11761        0.322
+   216     11       1   0.1770  0.0486      0.10340        0.303
+   228     10       1   0.1593  0.0468      0.08956        0.283
+   250      9       1   0.1416  0.0448      0.07614        0.263
+   260      8       1   0.1239  0.0426      0.06318        0.243
+   278      7       1   0.1062  0.0400      0.05076        0.222
+   287      6       1   0.0885  0.0371      0.03896        0.201
+   314      5       1   0.0708  0.0336      0.02793        0.180
+   384      4       1   0.0531  0.0295      0.01788        0.158
+   392      3       1   0.0354  0.0244      0.00917        0.137
+   411      2       1   0.0177  0.0175      0.00256        0.123
+   553      1       1   0.0000     NaN           NA           NA
+ 
+                 treatment=2 
+  time n.risk n.event survival std.err lower 95% CI upper 95% CI
+     1     68       2   0.9706  0.0205      0.93125        1.000
+     2     66       1   0.9559  0.0249      0.90830        1.000
+     7     65       2   0.9265  0.0317      0.86647        0.991
+     8     63       2   0.8971  0.0369      0.82766        0.972
+    13     61       1   0.8824  0.0391      0.80900        0.962
+    15     60       2   0.8529  0.0429      0.77278        0.941
+    18     58       1   0.8382  0.0447      0.75513        0.930
+    19     57       2   0.8088  0.0477      0.72056        0.908
+    20     55       1   0.7941  0.0490      0.70360        0.896
+    21     54       1   0.7794  0.0503      0.68684        0.884
+    24     53       2   0.7500  0.0525      0.65383        0.860
+    25     51       3   0.7059  0.0553      0.60548        0.823
+    29     48       1   0.6912  0.0560      0.58964        0.810
+    30     47       1   0.6765  0.0567      0.57394        0.797
+    31     46       1   0.6618  0.0574      0.55835        0.784
+    33     45       1   0.6471  0.0580      0.54289        0.771
+    36     44       1   0.6324  0.0585      0.52754        0.758
+    43     43       1   0.6176  0.0589      0.51230        0.745
+    44     42       1   0.6029  0.0593      0.49717        0.731
+    45     41       1   0.5882  0.0597      0.48216        0.718
+    48     40       1   0.5735  0.0600      0.46724        0.704
+    49     39       1   0.5588  0.0602      0.45244        0.690
+    51     38       2   0.5294  0.0605      0.42313        0.662
+    52     36       2   0.5000  0.0606      0.39423        0.634
+    53     34       1   0.4853  0.0606      0.37993        0.620
+    61     33       1   0.4706  0.0605      0.36573        0.606
+    73     32       1   0.4559  0.0604      0.35163        0.591
+    80     31       2   0.4265  0.0600      0.32373        0.562
+    84     28       1   0.4112  0.0597      0.30935        0.547
+    87     27       1   0.3960  0.0594      0.29509        0.531
+    90     25       1   0.3802  0.0591      0.28028        0.516
+    95     24       1   0.3643  0.0587      0.26560        0.500
+    99     23       2   0.3326  0.0578      0.23670        0.467
+   111     20       2   0.2994  0.0566      0.20673        0.434
+   112     18       1   0.2827  0.0558      0.19203        0.416
+   133     17       1   0.2661  0.0550      0.17754        0.399
+   140     16       1   0.2495  0.0540      0.16326        0.381
+   164     15       1   0.2329  0.0529      0.14920        0.363
+   186     14       1   0.2162  0.0517      0.13538        0.345
+   201     13       1   0.1996  0.0503      0.12181        0.327
+   231     12       1   0.1830  0.0488      0.10851        0.308
+   242     10       1   0.1647  0.0472      0.09389        0.289
+   283      9       1   0.1464  0.0454      0.07973        0.269
+   340      8       1   0.1281  0.0432      0.06609        0.248
+   357      7       1   0.1098  0.0407      0.05304        0.227
+   378      6       1   0.0915  0.0378      0.04067        0.206
+   389      5       1   0.0732  0.0344      0.02912        0.184
+   467      4       1   0.0549  0.0303      0.01861        0.162
+   587      3       1   0.0366  0.0251      0.00953        0.140
+   991      2       1   0.0183  0.0180      0.00265        0.126
+   999      1       1   0.0000     NaN           NA           NA</code></pre>
+</div>
+
+  <div class="container">
+    <h2>Plotting the survival of patients with standard test vs survival of patients with standard test with a test drug</h2>
+
+    <img src="images/r-stat/survival_plot.jpeg" alt="seconds" width="700" height="600">
+    <p>Survival probability at 1 year (365 days) on standard vs test treatment </p>
+      <p>Almost equal number of standard treatment and test treatment, i.e., sample is balanced. 128 out of 137 patients died during the study and 9 patient records are censored.
+    </p>
+
+
+    </div>
+</section>
+    <section>
+      <div class="container">
+
+        <h2>Performing Kaplan-Meier non-parametric analysis</h2>
+<div class="container">
+<pre class="r"><code>summary(km, times=365)</code></pre>
+<pre><code> Call: survfit(formula = Surv(survival, status) ~ treatment, data = d)
+ 
+                 treatment=1 
+         time       n.risk      n.event     survival      std.err     lower 95% CI upper 95% CI 
+ 
+     365.0000       4.0000      60.0000       0.0708       0.0336       0.0279       0.1795 
+ 
+                 treatment=2 
+         time       n.risk      n.event     survival      std.err     lower 95% CI    upper 95% CI 
+       
+     365.0000       6.0000      58.0000       0.1098       0.0407       0.0530        0.2272
+ </code></pre>
+<p>Answer: 7% of patients on standard treatment (=1, chemo only) are expected to survive 1 year compared to 11% of patients on test treatment (=0, chemo + new drug). 95% CI for standard group is (3%, 18%) and for test group is (5%, 23%). Survival probability at 6 months (183 days) on standard vs test treatment</p>
+</div>
+
+<div class="container">
+
+
+<pre class="r"><code>summary(km, times=183)</code></pre>
+<pre><code> Call: survfit(formula = Surv(survival, status) ~ treatment, data = d)
+ 
+                 treatment=1 
+         time       n.risk      n.event     survival      std.err     lower 95% CI    upper 95% CI 
+  
+     183.0000      12.0000      52.0000       0.2124       0.0514       0.1322            0.3414 
+
+                 treatment=2 
+         time       n.risk      n.event     survival      std.err     lower 95% CI    upper 95% CI 
+       
+     183.0000      14.0000      51.0000       0.2329       0.0529       0.1492        0.3634
+</code></pre>
+<p>Answer: 21% of patients on standard treatment (=1, chemo only) are expected to survive 6 months compared to 23% of patients on test treatment (=0, chemo + new drug). Median number of days a patient is expected to survive on standard vs the test treatment</p>
+<pre class="r"><code>print(km)</code></pre>
+</div>
+
+<p> Median number of days a patient is expected to survive on standard vs the test treatment</p>
+<pre><code> Call: survfit(formula = Surv(survival, status) ~ treatment, data = d)
+ 
+              n events median 0.95LCL 0.95UCL
+ treatment=1 69     64  103.0      59     132
+ treatment=2 68     64   52.5      44      95</code></pre>
+<p>
+103 days on standard treatment vs 52 days on test treatment
+<br>
+
+Interpretation:
+<br>
+The test treatment outperforms the standard treatment on survival probability at 6 months 
+and 1 year. However, the KM plot shows that this pattern is not consistent.
+For the first 24 days,both treatments have comparable survival probablities (around 75%). 
+After that, the standard treatment outperforms the test treatment on survival probablity 
+until around 200 days. Beyond 200 days, the test treatment shows better survival probablity.
+This could mean that it takes about 6 months to start seeing the effects of the new drug.
+<br>
+Semi-parametric  and parametric  analysis
+
+Predictor variables selected for analysis:<br>
+ Treatment: We want to examine the effect of the two treatments on survival outcomes
+ Months from diagnosis: People diagnosed late may not respond effectively to treatment
+ Age (years): Older patients may respond differently to treatment than younger patients
+ Prior chemotherapy (0=no, 1=yes): Prior chemo may influence the outcome of the treatment. 
+ Cell type: There are two main types of lung cancer: small cell (2=small cell) and 
+            non-small cell (1=squamous, 3=adeno, 4=large). The treatment may respond 
+            differently to the type of cancer.
+
+Variables not considered as predictors:
+ Karnofsky score: This score measures the ability of cancer patients to perform ordinary tasks.
+            It may be used to determine a patient's prognosis, to measure changes in a patient's 
+            ability to function, or to decide if a patient could be included in a clinical trial.
+            It is unclear how it may related to treatment outcome.
+
+</p>
+
+      </div>
+
+
+    </section>
+
+      <div class="container">
+
+          <h3> Cox proportional hazard model </h3>
+          <pre class="r"><code>cox &lt;- coxph(Surv(survival, status) ~ treatment + cancer_type + age + months_from_diagnosis +
+            prev_chemo + treatment*age + treatment*cancer_type, data=d, method=&quot;breslow&quot;)
+summary(cox)</code></pre>
+<pre><code> Call:
+ coxph(formula = Surv(survival, status) ~ treatment + cancer_type + 
+     age + months_from_diagnosis + prev_chemo + treatment * age + 
+     treatment * cancer_type, data = d, method = &quot;breslow&quot;)
+ 
+   n= 137, number of events= 128 
+ 
+                                            coef  exp(coef)   se(coef)      z
+ treatment2                            0.5548101  1.7416103  1.2960090  0.428
+ cancer_typenon-small_cell            -0.3942409  0.6741916  0.2590624 -1.522
+ age                                   0.0039121  1.0039198  0.0122544  0.319
+ months_from_diagnosis                 0.0065941  1.0066159  0.0092066  0.716
+ prev_chemo1                          -0.1527570  0.8583383  0.2335423 -0.654
+ treatment2:age                       -0.0002618  0.9997383  0.0205105 -0.013
+ treatment2:cancer_typenon-small_cell -0.5622573  0.5699211  0.4004749 -1.404
+                                      Pr(&gt;|z|)
+ treatment2                              0.669
+ cancer_typenon-small_cell               0.128
+ age                                     0.750
+ months_from_diagnosis                   0.474
+ prev_chemo1                             0.513
+ treatment2:age                          0.990
+ treatment2:cancer_typenon-small_cell    0.160
+ 
+                                      exp(coef) exp(-coef) lower .95 upper .95
+ treatment2                              1.7416     0.5742    0.1373    22.086
+ cancer_typenon-small_cell               0.6742     1.4833    0.4058     1.120
+ age                                     1.0039     0.9961    0.9801     1.028
+ months_from_diagnosis                   1.0066     0.9934    0.9886     1.025
+ prev_chemo1                             0.8583     1.1650    0.5431     1.357
+ treatment2:age                          0.9997     1.0003    0.9603     1.041
+ treatment2:cancer_typenon-small_cell    0.5699     1.7546    0.2600     1.249
+ 
+ Concordance= 0.58  (se = 0.03 )
+ Likelihood ratio test= 13.24  on 7 df,   p=0.07
+ Wald test            = 14.9  on 7 df,   p=0.04
+ Score (logrank) test = 15.79  on 7 df,   p=0.03</code></pre>
+
+      </div>
+
+      <div class="container">
+      
+<pre class="r"><code>exp &lt;- survreg(Surv(survival, status) ~ treatment + cancer_type + age + months_from_diagnosis +
+            prev_chemo + treatment*age + treatment*cancer_type, data=d, dist=&quot;exponential&quot;)
+
+weibull &lt;- survreg(Surv(survival, status) ~ treatment + cancer_type + age + months_from_diagnosis +
+            prev_chemo + treatment*age + treatment*cancer_type, data=d, dist=&quot;weibull&quot;)
+
+loglogistic &lt;- survreg(Surv(survival, status) ~ treatment + cancer_type + age + months_from_diagnosis +
+            prev_chemo + treatment*age + treatment*cancer_type, data=d, dist=&quot;loglogistic&quot;)
+</code></pre>
+<h2>Interpretation:</h2>
+<p>Cox proportional hazard model reports estimated hazard rates, which are pretty consistent with survival probabilities reported by Exponential and Weibull models, all of which are a little different from the log-logistic model. Hence, we will use the Cox PH model for interpretation.
+The hazard rate of the test treatment is greater than the standard treatment by exp(0.55) = 73%. Age has no significant effect on hazard rate on its own (0.4%) or in interaction with different treatments (&lt;0.1%). Months from diagnosis also seems to have an insubstantive effect (0.7%). Previous chemotherapy decreases hazard rate by 14% (independent of treatment). Non-small cell cancer has a 43% less hazard rate for the test treatment compared to standard treatment and a 61% less hazard rate compared to small-cell cancer. None of these coefficients are significant due to high standard error, possibly caused by small sample size.</p>
+</code></pre>
+
+<pre><code>
+ ================================================================================================
+                                                          Dependent variable:                    
+                                      -----------------------------------------------------------
+                                                               survival                          
+                                             Cox        exponential Weibull  survreg: loglogistic
+                                        prop. hazards                                            
+                                             (1)            (2)       (3)            (4)         
+ ------------------------------------------------------------------------------------------------
+ treatment2                                 0.555         -0.506     -0.498         -1.640       
+                                           (1.296)        (1.324)   (1.412)        (1.400)       
+                                                                                                 
+ cancer_typenon-small_cell                 -0.394         0.425*     0.446         0.779**       
+                                           (0.259)        (0.257)   (0.279)        (0.314)       
+                                                                                                 
+ age                                        0.004         -0.007     -0.007         -0.005       
+                                           (0.012)        (0.012)   (0.013)        (0.014)       
+                                                                                                 
+ months_from_diagnosis                      0.007         -0.008     -0.008         -0.005       
+                                           (0.009)        (0.009)   (0.010)        (0.012)       
+                                                                                                 
+ prev_chemo1                               -0.153          0.214     0.201          -0.077       
+                                           (0.234)        (0.233)   (0.251)        (0.278)       
+                                                                                                 
+ treatment2:age                            -0.0003        -0.001     -0.001         0.021        
+                                           (0.021)        (0.021)   (0.022)        (0.022)       
+                                                                                                 
+ treatment2:cancer_typenon-small_cell      -0.562         0.667*     0.628          0.111        
+                                           (0.400)        (0.392)   (0.425)        (0.484)       
+                                                                                                 
+ Constant                                                4.977***   4.906***       4.232***      
+                                                          (0.748)   (0.810)        (0.878)       
+                                                                                                 
+ ------------------------------------------------------------------------------------------------
+ Observations                                137            137       137            137         
+ R2                                         0.092                                                
+ Max. Possible R2                           0.999                                                
+ Log Likelihood                           -499.265       -741.070   -740.365       -743.469      
+ chi2 (df = 7)                                           20.303***  15.452**       13.595*       
+ Wald Test                            14.900** (df = 7)                                          
+ LR Test                              13.239* (df = 7)                                           
+ Score (Logrank) Test                 15.792** (df = 7)                                          
+ ================================================================================================
+ Note:                                                                *p&lt;0.1; **p&lt;0.05; ***p&lt;0.01</code></pre>
+
+
+
+      </div>
+
+
+    <footer>
+      <p>Portfolio 2020</p>
+    </footer>
+  </body>
+</html>

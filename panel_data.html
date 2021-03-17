@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <meta name="description" content="Personal Portfolio">
+      <meta name="keywords" content="data science, data analytics, visualization, visualisation">
+    <meta name="Mukund" content="Mukund's Portfolio">
+    <title>R | Stat</title>
+    <link rel="stylesheet" href="./css/style.css">
+  </head>
+  <body>
+    <header>
+      <div class="container">
+        <div id="branding">
+          <h1><span class="highlight">Multi-Level & Panel Data Models in R</span></h1>
+        </div>
+        <nav>
+          <ul>
+            <li class="current"><a href="panel_data_code.html">Click here for code</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+
+    <section id="newsletter">
+      <div class="container">
+
+<h1>
+1. We want to analyze how sales vary by outlet type: Grocery store versus Supermarket Type 1, 2, or 3.  Ignore city information for this analysis. Conduct the necessary analysis and present the output in a nice, concise manner. Interpret the findings of this analysis, i.e., which type of store has the highest sales, by what amount, etc.
+<br>
+2. We also want to analyze if sales vary by city type: Tier 1, 2 and 3. For this analysis, you have to account for both city and outlet. Again, conduct the necessary analysis in a succinct way and present the results and interpretation of your analysis. 
+</h1>
+
+    </div>
+    </section>
+
+    <section id="boxes">
+      <div class="container">
+        
+          
+          <h3>Knowing the variables</h3>
+          <p>
+             a. Item_ID            : Unique product ID assigned to every distinct item<br>
+             b. Item_Weight        : Weight of the items in lbs <br>
+             c. Item_Fat_Content   : Categorical variable for fat content of items. They are classified in two categories, "Regular" and "Low Fat"<br>
+             d. Item_Visibility    : Percentage of total display area of all products in a store allocated to this product<br>
+             e. Item_Type          : Categorical variable for different items in the stores <br>
+             The 16  categories are as follow 'Dairy', 'Soft Drinks', 'Meat', 'Fruits and Vegetables', 'Household', 'Baking Goods', 'Snack Foods', 'Frozen Foods', 'Breakfast', 'Health and Hygiene', 'Hard Drinks', 'Canned', 'Breads', 'Starchy Foods', 'Others', 'Seafood'<br>
+             f. Item_MRP: Maximum Retail Price (list price) of the product<br>
+             g. Outlet_ID          : Unique store ID<br>
+             h. Outlet_Year        : Year in which store was opened<br>
+             i. Outlet_Size        : Categorical vairable for size of the store. The 3 categories are 'High', 'Medium', 'Small'<br>
+             j. City_Type          : Categorical variable for size of city where store is located. The 3 categories are as follow 'Tier 1', 'Tier 2', 'Tier 3'
+             k. Outlet_Type: Categorical variable for type of outlet. The 4 types of stores in the data set are as follow 'Grocery Store', 'Supermarket Type1', 'Supermarket Type2', 'Supermarket Type3'
+             l. Item_Sales         : Sales of product in each store, the dependent vairable
+
+</p>
+
+          
+          <h3>Analysis</h3>
+          <p>Gaining insight from data </p>
+<p>Histogram for sales</p>
+<img src="C:\Users\mukun\OneDrive\Documents\portfolio\mukundsk.github.io\images\panel-data\Rplot.jpeg">
+
+
+<p> Distribution of Stores in the data set</p>
+<table>
+<tbody> 
+  <tr>
+    <td>Grocery Store</td>
+    <td> Supermarket Type1</td>
+    <td> Supermarket Type2</td>
+    <td> Supermarket Type3 </td>
+  </tr>
+</tbody>
+<tr>
+<td>1083</td>
+<td>5577</td>
+<td>928</td>
+<td>935</td>
+</tr>
+</table>
+
+<p> Distribution of Cities in the data set </p>
+<table>
+<tbody> 
+  <tr>
+    <td>Tier 1</td>
+    <td>Tier 2</td>
+    <td>Tier 3</td>
+  </tr>
+</tbody>
+<tr>
+<td>2388</td>
+<td>2785</td>
+<td>3350</td>
+</tr>
+</table>
+
+<p> Distribution of outlet with respect to the cities</p>
+        
+<table>
+<tbody> 
+  <tr>
+    <td> </td>
+    <td>Grocery Store</td>
+    <td> Supermarket Type1</td>
+    <td> Supermarket Type2</td>
+    <td> Supermarket Type3 </td>
+  </tr>
+</tbody>
+<tr>
+<td>Tier 1</td>
+<td>528</td>
+<td>1860</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr>
+<td>Tier 2</td>
+<td>0</td>
+<td>2785</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr>
+<td>Tier 3</td>
+<td>555</td>
+<td>932</td>
+<td>928</td>
+<td>935</td>
+</tr>
+</table>
+
+<h3>Variable selection for Mixed Level Analysis</h3>
+
+<p>Variables that affect item sales:<br>
+   Item_ID:          Unit of analysis (will not be included in model)<br>
+   Item_Visibility:  More visible products should sell more<br>
+   Item_Type:        Certain item types such as dairy or vegetables may sell more<br>
+   Item_MRP:         Pricier items may sell less<br>
+<br>
+ Variables that affect item sales<br>
+   Outlet_ID:        Unit of analysis for upper-level (must be included in model)<br>
+   Outlet_Type:      First part of analysis: how sales vary by outlet type<br>
+   City_Type:        Second part of analysis: how sales vary by city type<br>
+   <strong>Outlet_Age:      2013 - Outlet_Year</strong><br>
+
+ Outlet_year (year of founding of outlet) doesn't make sense as a predictor,
+ but older outlets may have more established clientale and may sell more compared
+ to new ones. We measure Outlet_Age as (2013) - year of founding
+</p>
+
+<h3> Mixed-level model using lmer</h3>
+
+<h4>Part 1: How item sales vary by outlet type (Grocery store, Supermarket Type 1, 2, 3)</h4>
+
+<p>A basic varying intercept model: random effect of outlet_type on item_sales.
+This is a very basic model that does not control for item or store-level variables</p>
+
+<p>m1 <- lmer(Item_Sales ~ Outlet_Type + (1 | Outlet_ID), data=d)   </p>
+
+<p>Better model: Varying intercept model with control variables</p>
+
+<p>m2 <- lmer(Item_Sales ~ Outlet_Type + Outlet_Age + Item_MRP + Item_Visibility + 
+      (1 | Outlet_ID), data=d)</p>
+
+<p> More complex model: Varying intercept and slope model with control variables</p>
+<p>m3 <- lmer(Item_Sales ~ Outlet_Type + Outlet_Age + Item_MRP + Item_Visibility + 
+      (1 | Outlet_Type/Outlet_ID), data=d)</p>
+
+<p>A stargazer of all the 3 models </p>
+
+<table style="text-align:center"><tr><td colspan="4" style="border-bottom: 1px solid black"></td></tr><tr><td style="text-align:left"></td><td colspan="3"><em>Dependent variable:</em></td></tr>
+<tr><td></td><td colspan="3" style="border-bottom: 1px solid black"></td></tr>
+<tr><td style="text-align:left"></td><td colspan="3">Item_Sales</td></tr>
+<tr><td style="text-align:left"></td><td>(1)</td><td>(2)</td><td>(3)</td></tr>
+<tr><td colspan="4" style="border-bottom: 1px solid black"></td></tr><tr><td style="text-align:left">Outlet_TypeSupermarket Type1</td><td>1,976.348<sup>***</sup></td><td>1,931.285<sup>***</sup></td><td>1,931.285<sup>**</sup></td></tr>
+<tr><td style="text-align:left"></td><td>(68.941)</td><td>(75.552)</td><td>(923.844)</td></tr>
+<tr><td style="text-align:left"></td><td></td><td></td><td></td></tr>
+<tr><td style="text-align:left">Outlet_TypeSupermarket Type2</td><td>1,655.665<sup>***</sup></td><td>1,579.820<sup>***</sup></td><td>1,579.821<sup>*</sup></td></tr>
+<tr><td style="text-align:left"></td><td>(98.137)</td><td>(123.414)</td><td>(928.985)</td></tr>
+<tr><td style="text-align:left"></td><td></td><td></td><td></td></tr>
+<tr><td style="text-align:left">Outlet_TypeSupermarket Type3</td><td>3,354.204<sup>***</sup></td><td>3,365.534<sup>***</sup></td><td>3,365.534<sup>***</sup></td></tr>
+<tr><td style="text-align:left"></td><td>(98.046)</td><td>(101.733)</td><td>(926.353)</td></tr>
+<tr><td style="text-align:left"></td><td></td><td></td><td></td></tr>
+<tr><td style="text-align:left">Outlet_Age</td><td></td><td>-2.442</td><td>-2.442</td></tr>
+<tr><td style="text-align:left"></td><td></td><td>(4.327)</td><td>(4.327)</td></tr>
+<tr><td style="text-align:left"></td><td></td><td></td><td></td></tr>
+<tr><td style="text-align:left">Item_MRP</td><td></td><td>15.561<sup>***</sup></td><td>15.561<sup>***</sup></td></tr>
+<tr><td style="text-align:left"></td><td></td><td>(0.196)</td><td>(0.196)</td></tr>
+<tr><td style="text-align:left"></td><td></td><td></td><td></td></tr>
+<tr><td style="text-align:left">Item_Visibility</td><td></td><td>-263.819</td><td>-263.820</td></tr>
+<tr><td style="text-align:left"></td><td></td><td>(247.354)</td><td>(247.354)</td></tr>
+<tr><td style="text-align:left"></td><td></td><td></td><td></td></tr>
+<tr><td style="text-align:left">Constant</td><td>339.834<sup>***</sup></td><td>-1,763.148<sup>***</sup></td><td>-1,763.148<sup>***</sup></td></tr>
+<tr><td style="text-align:left"></td><td>(61.466)</td><td>(116.137)</td><td>(661.347)</td></tr>
+<tr><td style="text-align:left"></td><td></td><td></td><td></td></tr>
+<tr><td colspan="4" style="border-bottom: 1px solid black"></td></tr><tr><td style="text-align:left">Observations</td><td>8,523</td><td>8,523</td><td>8,523</td></tr>
+<tr><td style="text-align:left">Log Likelihood</td><td>-74,335.950</td><td>-71,974.020</td><td>-71,974.020</td></tr>
+<tr><td style="text-align:left">Akaike Inf. Crit.</td><td>148,683.900</td><td>143,966.000</td><td>143,968.000</td></tr>
+<tr><td style="text-align:left">Bayesian Inf. Crit.</td><td>148,726.200</td><td>144,029.500</td><td>144,038.600</td></tr>
+<tr><td colspan="4" style="border-bottom: 1px solid black"></td></tr><tr><td style="text-align:left"><em>Note:</em></td><td colspan="3" style="text-align:right"><sup>*</sup>p<0.1; <sup>**</sup>p<0.05; <sup>***</sup>p<0.01</td></tr>
+</table>
+
+
+
+<h3> Interpretation:</h3>
+ 
+<p>All three models show consistent and stable beta coefficients for Outlet_Type.
+Since m2 and m3 are more comprehensive, and their estimates are identical, we 
+will use these models for interpretation. Our analysis shows that:
+Supermarket Type 1 make $1,931 more in sales than Grocery Stores (p<0.01), when 
+controlled for item and outlet level differences.
+Supermarket Type 2 make $1,580 more in sales than Grocery Stores (p<0.05).
+Supermarket Type 3 make $3,365 more in sales than Grocery Stores (p<0.001). 
+From the standard errors, Supermarket Type 1, 2, and 3 are also significantly 
+different from each other.
+The order of Item_Sales by Outlet_Type is Supermarket Type 3 (highest), Type 1,
+Type 2, and Grocery Store (lowest).
+</p>
+
+<h4>Part 2: How item sales by city type (Tier 1, 2 and 3)</h4>
+<p>Three models from basic varying intercept model to varying slope and intercept model
+</p>
+
+<p>m4 <- lmer(Item_Sales ~ City_Type + (1 | Outlet_ID), data=d)   </p>
+
+<p>m5 <- lmer(Item_Sales ~ City_Type + Outlet_Type + Outlet_Age + Item_MRP + 
+      Item_Visibility + (1 | Outlet_ID), data=d)</p>
+
+<p>m6 <- lmer(Item_Sales ~ City_Type + Outlet_Type + Outlet_Age + Item_MRP + 
+      Item_Visibility + (1 | City_Type/Outlet_ID), data=d)</p>
+
+
+<table style="text-align:center"><tr><td colspan="4" style="border-bottom: 1px solid black"></td></tr><tr><td style="text-align:left"></td><td colspan="3"><em>Dependent variable:</em></td></tr>
+<tr><td></td><td colspan="3" style="border-bottom: 1px solid black"></td></tr>
+<tr><td style="text-align:left"></td><td colspan="3">Item_Sales</td></tr>
+<tr><td style="text-align:left"></td><td>(1)</td><td>(2)</td><td>(3)</td></tr>
+<tr><td colspan="4" style="border-bottom: 1px solid black"></td></tr><tr><td style="text-align:left">City_TypeTier 2</td><td>667.789</td><td>-16.168</td><td>-16.168</td></tr>
+<tr><td style="text-align:left"></td><td>(889.568)</td><td>(112.171)</td><td>(277.767)</td></tr>
+<tr><td style="text-align:left"></td><td></td><td></td><td></td></tr>
+<tr><td style="text-align:left">City_TypeTier 3</td><td>426.387</td><td>-14.527</td><td>-14.527</td></tr>
+<tr><td style="text-align:left"></td><td>(832.189)</td><td>(93.286)</td><td>(270.693)</td></tr>
+<tr><td style="text-align:left"></td><td></td><td></td><td></td></tr>
+<tr><td style="text-align:left">Outlet_TypeSupermarket Type1</td><td></td><td>1,931.141<sup>***</sup></td><td>1,931.141<sup>***</sup></td></tr>
+<tr><td style="text-align:left"></td><td></td><td>(96.306)</td><td>(96.307)</td></tr>
+<tr><td style="text-align:left"></td><td></td><td></td><td></td></tr>
+<tr><td style="text-align:left">Outlet_TypeSupermarket Type2</td><td></td><td>1,579.705<sup>***</sup></td><td>1,579.705<sup>***</sup></td></tr>
+<tr><td style="text-align:left"></td><td></td><td>(189.086)</td><td>(189.088)</td></tr>
+<tr><td style="text-align:left"></td><td></td><td></td><td></td></tr>
+<tr><td style="text-align:left">Outlet_TypeSupermarket Type3</td><td></td><td>3,375.331<sup>***</sup></td><td>3,375.331<sup>***</sup></td></tr>
+<tr><td style="text-align:left"></td><td></td><td>(138.504)</td><td>(138.506)</td></tr>
+<tr><td style="text-align:left"></td><td></td><td></td><td></td></tr>
+<tr><td style="text-align:left">Outlet_Age</td><td></td><td>-2.855</td><td>-2.855</td></tr>
+<tr><td style="text-align:left"></td><td></td><td>(7.529)</td><td>(7.529)</td></tr>
+<tr><td style="text-align:left"></td><td></td><td></td><td></td></tr>
+<tr><td style="text-align:left">Item_MRP</td><td></td><td>15.561<sup>***</sup></td><td>15.561<sup>***</sup></td></tr>
+<tr><td style="text-align:left"></td><td></td><td>(0.196)</td><td>(0.196)</td></tr>
+<tr><td style="text-align:left"></td><td></td><td></td><td></td></tr>
+<tr><td style="text-align:left">Item_Visibility</td><td></td><td>-264.975</td><td>-264.975</td></tr>
+<tr><td style="text-align:left"></td><td></td><td>(247.380)</td><td>(247.380)</td></tr>
+<tr><td style="text-align:left"></td><td></td><td></td><td></td></tr>
+<tr><td style="text-align:left">Constant</td><td>1,656.178<sup>***</sup></td><td>-1,746.776<sup>***</sup></td><td>-1,746.776<sup>***</sup></td></tr>
+<tr><td style="text-align:left"></td><td>(629.099)</td><td>(182.885)</td><td>(256.386)</td></tr>
+<tr><td style="text-align:left"></td><td></td><td></td><td></td></tr>
+<tr><td colspan="4" style="border-bottom: 1px solid black"></td></tr><tr><td style="text-align:left">Observations</td><td>8,523</td><td>8,523</td><td>8,523</td></tr>
+<tr><td style="text-align:left">Log Likelihood</td><td>-74,360.830</td><td>-71,963.180</td><td>-71,963.180</td></tr>
+<tr><td style="text-align:left">Akaike Inf. Crit.</td><td>148,731.700</td><td>143,948.400</td><td>143,950.400</td></tr>
+<tr><td style="text-align:left">Bayesian Inf. Crit.</td><td>148,766.900</td><td>144,025.900</td><td>144,035.000</td></tr>
+<tr><td colspan="4" style="border-bottom: 1px solid black"></td></tr><tr><td style="text-align:left"><em>Note:</em></td><td colspan="3" style="text-align:right"><sup>*</sup>p<0.1; <sup>**</sup>p<0.05; <sup>***</sup>p<0.01</td></tr>
+</table>
+
+<h3> Interpretation:</h3>
+<p> 
+Models m4, m5, and m6 had very different parameter estimates, but since m4 was
+very basic, and m5 and m6 parameters are stable and consistent, we use those models
+for interpretation.
+Items sell the highest in Tier 1 cities when controlled for item and outlet level differences.
+Outlets in Tier 2 and 3 cities sell $16 and $14 less compared to Tier 1; however these
+diferences are not statistically significant.
+Based on these findings, we infer that city tiers have no discernable impact on item sales.
+</p>
+
+
+</div>
+</section>
+    <footer>
+      <p>Portfolio 2020</p>
+    </footer>
+  </body>
+</html>

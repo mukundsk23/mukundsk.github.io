@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <meta name="description" content="Personal Portfolio">
+	  <meta name="keywords" content="data science, data analytics, visualization, visualisation">
+  	<meta name="Mukund" content="Mukund's Portfolio">
+    <title>R | Stat</title>
+    <link rel="stylesheet" href="./css/style.css">
+  </head>
+  <body>
+    <header>
+      <div class="container">
+        <div id="branding">
+          <h1><span class="highlight">Regression Project</span></h1>
+        </div>
+        <nav>
+          <ul>
+            <li class="current"><a href="r-stat-code.html">Click here for code</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+
+    <section id="newsletter">
+      <div class="container">
+        <h1>Goal : Using your judgment and the R tools you know, cleanse your random sample data of aberrant cases.  
+            Such cleansing cases is somewhat subjective, so explain your process and reasoning for identifying aberrancies in the data and
+             removing them. State how many cases you are left with in your random sample after cleansing.  This will be your primary data set for analysis.</h1>
+
+             tl:dr : Perform Exploratory Data Analysis using tools in R, clean the data and select features for the best linear regression  model.
+        
+    </section>
+
+    <section id="boxes">
+      <div class="container">
+        
+          
+          <h3>Knowing the variables</h3>
+          <p>
+
+            This file contains information on 1,705,805 taxi cab trips in the City of Chicago during 2016.  The data was taken from kaggle.com.  
+<br>
+            Variables in this data set are:
+            <br>
+            a.	taxi_id: a unique identifier for each individual taxi cab.<br>
+            b.	trip_seconds:  the number of seconds elapsed during the trip.<br>
+            c.	trip_miles:  the number of miles logged during the trip.<br>
+            d.	fare:  the base fare charged to the customer for the trip.<br>
+            e.	tips:  the tip given by the customer to the driver for the trip.<br>
+            f.	tolls:  any surcharges for road or bridge tolls incurred during the trip.<br>
+            g.	extras:  charges for any incidentals requested by the customer.<br>
+            h.	trip_total:  the total charge to the customer for the trip.<br>
+            i.	payment_type:  the method of payment used by the customer.  This includes cash, credit card, and several other methods of payment jointly classed as “other”.<br>
+            </p>
+        <br>
+          
+          <h3>Analysis</h3>
+          <p>
+              Gaining insight from data </p>
+              <table>   <tr><th>Measures</th>                <th> taxi_id  </th>    <th>trip_seconds    </th><th>trip_miles</th><th>fare</th>
+                <th>     tips</th>     <th>      tolls</th>       <th>extras        <th>trip_total</th>         </tr>
+<tr><td>Min </td>   <td>4  </td> <td>0</td>   <td>0.00  </td> <td> 3.250</td>  <td> 0.00</td>   <td>0</td>   <td>0.000</td>   <td>   3.250</td></tr> 
+<tr><td>1st Quadrant: </td><td>1767</td>   <td>240</td>   <td> 0.00</td>   <td>5.750</td>  <td>0.00</td>   <td>0</td>   <td>0.000</td>   <td>6.250</td>  </tr>
+<tr><td>Median</td><td>4364</td> <td>   480</td> <td>0.95</td> <td> 8.025</td>  <td> 0.00</td> <td>  0</td>  <td>0.000</td>   <td> 9.125</td> </tr>
+<tr><td>Mean</td>   <td>4173</td> <td> 681</td>   <td>7.22</td>   <td>13.504</td><td> 1.66</td>   <td>0</td>   <td>0.705</td ><td>15.869</td> </tr>
+<tr><td>3rd Quadrant </td><td>6354</td>   <td> 855   </td> <td>  3.00</td>   <td>15.062</td><td> 2.00</td> <td>0</td>   <td>1.000</td>   <td>18.863</td> </tr>
+<tr><td>Max</td>   <td>8696</td>  <td>4680</td><td>450.00</td>   <td>56.000</td>  <td>10.15</td>   <td>   0</td> <td>   6.000</td>   <td>60.900 </td></tr>
+              </table>
+              <br>
+  
+              <table>
+              <tr><th>payment_type</th><th>value</th></tr>
+<tr><td>Credit Card</td> <td>50</td></tr>  
+<tr><td>Other</td>       <td>0</td></tr>    
+</table>
+</div>
+
+<div class="container">
+  <p>
+    There are a few records wherein trip_seconds is 0 and trip_fair is some positive value.
+    This is a case of INCORRECT DATA or missing value, since if the trip_seconds are 0,
+    ideally there shouldn't be any fare. So cleaning those values.
+  </p>
+</div>
+
+
+<div class="container">
+
+  <p>After cleaning the values</p>
+              <table>   <tr><th>Measures</th>                <th> taxi_id  </th>    <th>trip_seconds    </th><th>trip_miles</th><th>fare</th>
+                <th>     tips</th>            <th>extras        <th>trip_total</th>         </tr>
+<tr><td>Min </td>   <td>4  </td> <td>60.0 </td>   <td> 0.100  </td> <td>  3.75</td>  <td> 0.00</td>   <td>0.000   </td>   <td>4.45   </td>   </tr> 
+<tr><td>1st Quadrant: </td><td>1488   </td>   <td>360.0   </td>   <td>0.800   </td>   <td>6.25 </td>  <td>0.000   </td>   <td>0.000   </td>   <td>7.50   </td></tr>
+<tr><td>Median</td><td>4362   </td> <td>540.0   </td> <td>1.600   </td> <td>8.75 </td>  <td>1.000   </td> <td>0.0000   </td>  <td>9.75   </td>  </tr>
+<tr><td>Mean</td>   <td>4033</td> <td>765.2</td>   <td>9.899</td>   <td>13.55</td><td> 1.895</td>   <td>0.7603</td>   <td>16.21</td > </tr>
+<tr><td>3rd Quadrant </td><td>6207</td>   <td> 960.0   </td> <td>  4.40</td>   <td>15.00</td><td> 2.50</td> <td>1.00</td>   <td>18.75</td>  </tr>
+<tr><td>Max</td>   <td>8696</td>  <td>4680.0</td><td>450.00</td>   <td>56.000</td>  <td>10.15</td>   <td>   5.00</td> <td>   60.90</td>   </tr>
+              </table>
+              <br>
+  <table>
+              <tr><th>payment_type</th><th>value</th></tr>
+              <tr><td>Cash</td> <td>39  </td></tr>  
+              <tr><td>Credit Card</td> <td>0  </td></tr>  
+<tr><td>Other</td>       <td>0</td></tr>    
+</table>
+
+
+<h3>This was my very first statistical project, including taxi_id which is not even a relevant features highlights it.</h3>
+<span style='font-size:100px;'>&#128035;</span>
+<h2>Rest assured I removed it while performing analysis</h2>
+</div>
+
+
+<!-- <section id="newsletter"> -->
+  <div class="container">
+    <h2>Plotting box plots</h2>
+    <img src="images/image001.png" alt="seconds" width="300" height="300">
+    <img src="images/seconds.png" alt="seconds" width="300" height="300">
+    <p>From the density plot we see that the plot is right skewed, most of the records lie between 60-2000 seconds
+      and some lie in the vicinity of 4800 seconds
+      </p>
+      <p>As we can see in the box plot, the minimum is at 60 seconds and the maximum value(which is an outlier) is 4680 seconds
+      the median is 540 seconds and we have 4 outliers
+      From the skewness we can see that the plot is right skewed with high skewness
+    </p>
+
+<img src="images/image005.png" alt="Fare" width="300" height="300">
+<img src="images/fare.png" alt="Fare" width="300" height="300">
+<p>From the density plot we can see that the graph is right skewed and most of the values are between 3.75 to 20 and some are scattered from 20 to 60.
+</p>
+<p>
+For the fare  boxplot,
+the minimum value is 3.75 and the maxmium value(which is an outlier) is 56
+and the median is 8.75. As shown in the boxplot, we have multiple outliers
+around 10. The skewness for fare is 1.9303 which confirms that it is skewed to the right.
+</p>
+<img src="images/image009.png" alt="Extras" width="300" height="300">    
+<img src="images/extras.png" alt="Extras" width="300" height="300">
+    
+    
+<p>From the distribution plot we can see that the plot is righ skewed and most of the values are between 0 to 1 and rest are scattered beyond 2 till 6</p>
+<p>For the extras boxplot,
+  the minimum value(and the 1st quartile and also the median which overlap) is 0 and the maxmium 
+  value(which is an outlier) is 5 #and the median is 0. As shown in the boxplot, we have multiple outliers
+  around 3
+  The skewness for extras is 1.912984, and from the plot we can confirm that it is right skewed
+  </p>
+    
+  <img src="images/image007.png" alt="Extras" width="300" height="300">
+  <img src="images/tips.png" alt="Extras" width="300" height="300">
+  
+  <p>From the density plot we can see that the graph is right skewed and most of the values are between 0 to 5 and a few are between 5 to 10</p>
+  <p>For the tips boxplot,
+    the minimum value(and the 1st quartile which overlap) is 0 and the maxmium value(which is an outlier) is 10.15
+    and the median is 1. As shown in the boxplot, we have multiple outliers
+    around 7.
+    The skewness for tips is 1.75484, which is high and from the plot we can confirm that it is right skewed.
+    </p>
+  
+  
+  
+  <img src="images/miles.png" alt="miles" width="300" height="300">
+  <img src="images/image003.png" alt="miles" width="300" height="300">
+ <p>
+  From the density plot we can see that the plot is right skewed and most of the values are between 0.1 and 9.889
+and a few values are scattered between 0.100 to somewhere around 10.
+ </p>   
+    <p>For the trip_miles boxplot,
+      the minimum value is 0.1 mile and the maxmium value(which is an outlier) is 450 miles
+      and the median is 1.6 miles. As shown in the boxplot, we have multiple outliers
+      around 6-7
+      The skewness for trip_miles is 8.25 which indicates that it is highly skewed to the right
+      </p>
+
+    <img src="images/total amount.png" alt="Extras" width="300" height="300">
+    <img src="images/image011.png" alt="Extras" width="300" height="300">
+        <p>
+          From the density plot, we can say that most of the values are between 4.45 to 20 while few other points are from 20 to 60.90.
+        </p>
+
+        <p>For the trip_total boxplot,
+          #he minimum value is 4.45 and the maxmium value(which is an outlier) is 60.9
+          #nd the median is 9.75. As shown in the boxplot, we have multiple outliers
+          around 9.
+          The skewness for trips_total is 1.894067 and from the plot we can see that the plot is right skewed.
+          </p>
+            </div>
+          
+      </div>
+    </section>
+    <section>
+      <div class="container">
+
+        <h2>Correlation between variables</h2>
+        <img src="images/image013.png" alt="Extras" width="300" height="300">
+
+        <p>
+          The sample_data_correlation matrix shows the matrix of correlation.
+It measure the linear relation and strength between two variables
+For example the cor between trip_seconds and trip_miles is 0.0997. It is a positive number
+it mean that if trip_seconds increases, trip_miles also increases.
+Another example as per the cor, the relation between tips and trip_miles is negative,
+it means as the trip_miles increases the tips decreases or vice versa
+The best correlation is between fare and trip_miles.
+
+
+        </p>
+
+      </div>
+
+
+    </section>
+
+    <section>
+      <div class="container">
+        <h2>Building Models</h2>
+        <img src="images/image014.png" alt="Extras" width="300" height="300">
+        <p>This linear model was built using <strong>fare</strong> as the dependent variable and <strong>trip_seconds, trip_miles, and payment_type</strong>
+          as dependent variables. Keeping the <i>confience interval at 95%</i>, we get the values, the confidence interval values<br>
+          for (Intercept)  -2.10607443 to 2.50346298, <br>
+         for trip_seconds  0.01325227 to  0.01718661,<br>
+          for trip_miles   -0.02324120 to  0.02733108 and<br> 
+          for payment_type   0.49333928 to  5.81493280<br>
+          The equation for fare would be<br>
+          <strong><i>fare = 0.198694 + 0.0152194 * trip_seconds + 0.0020449 * trip_miles + 3.154136 * payment_type</i></strong><br>
+          <strong>for every change in trip_seconds, the fare changes by 0.0152194, and its p value is significantly small (less than 2e-16), 
+          hence we reject the null hypothesis,</strong><br>
+          <strong>for every change in trip_miles, the fare changes by 0.0020449, but its p value is significantly large(0.8723), 
+          hence we fail to reject the null hypothesis since there is not enough evidence</strong><br>
+          <strong>for every change in payment, the fare changes by 3.154136, and its p value is significantly small (0.0209), 
+          hence we reject the null hypothesis, </strong><br>
+          <strong> for the intercept, if the miles and seconds travelled is 0, and payment is also 0, then the total fare
+          should be 0.198694, which doesnt make any sense. Also its pvalue is significantly lare (0.8640),
+          hence we fail to reject the null hypothesis since there is not enough evidence.</strong><br>
+          Also the value for R-sq is 0.794 and Adj R-sq is 0.7851 which tells us the percentage that the three independent
+          variables describe the dependent one.
+          
+          By looking at the plot we can see that the points are clustered at the start, with few outliers
+          </p>
+      </div>
+
+      <div class="container">
+        <img src="images/image015.png" alt="Extras" width="300" height="300">
+        <p>Here I removed the <strong>payment record </strong>and build a linear model using only <strong> trip_seconds and trip_miles </strong>to see the change in the model.
+         <br><strong> The equation of line is 1.616472 + 0.015615 * trip_seconds - 0.001569 * miles</strong><br>
+          <strong> intercept the value is 1.616472. Its p value is 0.117 which is significantly large. It means if we change
+          the trip_seconds and trip_miles to 0, the fare would be 1.61647 which isn't correct. Hence judging for the p value,
+          we fail to reject the null hypothesis for the intercept</strong><br>
+<strong>          In case of trip_seconds, if the value for trip_seconds changes, the fare also changes by 0.015615. Its p value
+          is 2e-16 which is significanlty small and hence we reject the null hypothesis.</strong><br>
+
+          <strong>In case of trip_miles, if the value for trip_miles changes, the fare also changes by 0.001569. Its p value
+          is 0.904 which is significanlty large and hence we fail to reject the null hypothesis, due to lack of evidence</strong><br>
+          The value of R-sq is 0.7774 and for adj R-sq is 0.771 which is a good indicator for how the independent
+          variables describe the dependent variable
+          </p>
+      </div>
+
+      <div class="container">
+
+          <h3>Trying to use the interactions between features for feature engineering</h3>
+          <img src="images/image021.png" alt="Extras" width="300" height="300">
+<p>Here we are considering only the<strong> trip_miles and its squared value stored in miles_sq. </strong><br>
+  <strong>The equation for fare would be: fare = 4.7551053 + 2.3833269 * trip_miles - 0.0052553 * miles_sq</strong><br>
+
+  If trip_miles changes, the value for fare changes by 2.3833269. The p value for trip_miles is less than 2e-16, which
+  is significantly less, hence we can reject the Null Hypothesis. <br>
+  If miles_sq changes, the value for fare changes by -0.0052553. The p value for miles_sq is less than2e-16, which
+  is significantly less, hence we can reject the Null Hypothesis. <br>
+  For Intercept, the pvalue is 1.41e-09, hence we reject the Null Hypothesis
+  The  R-sq = 0.861 and Adj R-sq = 0.8571
+  </p>
+
+      </div>
+
+      <div class="container">
+
+        
+        <img src="images/image022.png" alt="Extras" width="300" height="300">
+<p>Here we consider <strong> trip_seconds, trip_seconds_sq, trip_miles </strong>for building the linear model.
+  <br><strong>The equation for fare becomes :
+   fare = -2.249e+00 + 2.382e-02 * trip_seconds - 2.276e-06 *  trip_seconds_sq - 6.444e-03 * trip_miles</strong><br>
+  If trip_seconds, trip_seconds_sq or trip_miles change, the fare changes by 2.382e-02 and 2.276e-06 and 
+  6.444e-03 respictively<br>
+  <br>The p value of intercept is 0.0818, which is a bit high and hence we fail to reject the Null Hypothesis due to lack of evidence 
+  for trips_seconds is less than 2e-16,hence we reject the null hypothesis,<br>
+  for trip_seconds_sq is 4.75e-05 hence we reject the null hypothesis,and for trip_miles is 0.5819,
+  which is significantly high,
+  hence we fail to reject the null hypothesis<br>
+  The  R-sq = 0.8251 and Adj R-sq = 0.8175
+  
+</p>
+
+    </div>
+
+    <div class="container">
+
+        
+      <img src="images/image024.png" alt="Extras" width="300" height="300">
+<p>Here we consider <strong> trip_seconds, trip_miles and miles_sq </strong>for building the linear model.
+  <br><strong>The equation for fare:
+  fare = 2.6668736 + 0.0064833 * trip_seconds + 1.6087559 * trip_miles - 0.0035525 * miles_sq</strong><br>
+  Here for all the variables, we get a pvalue such that we can reject the Null Hypothesis in every case.
+  For Intercept, the pvalue is 0.000215, for trip_seconds, the pvalue is 4.46e-07, for trip_miles, the pvalue is 3.18e-14
+  and for miles_sq, the pvalue is  2.91e-14 which are all less than 0.05. We can reject the Null Hypothesis.  <br>
+  The  R-sq = 0.9042 and Adj R-sq = 0.9
+  
+</p>
+
+  </div>
+
+  <div class="container">
+
+<h3>Best model</h3>        
+    <img src="images/image024.png" alt="Extras" width="300" height="300">
+<p>Here we consider <strong> trip_seconds, trip_miles and miles_sq </strong>for building the linear model.
+<br><strong>The equation for fare:
+fare = 2.6668736 + 0.0064833 * trip_seconds + 1.6087559 * trip_miles - 0.0035525 * miles_sq</strong><br>
+Here for all the variables, we get a pvalue such that we can reject the Null Hypothesis in every case.
+For Intercept, the pvalue is 0.000215, for trip_seconds, the pvalue is 4.46e-07, for trip_miles, the pvalue is 3.18e-14
+and for miles_sq, the pvalue is  2.91e-14 which are all less than 0.05. We can reject the Null Hypothesis.  <br>
+The  R-sq = 0.9042 and Adj R-sq = 0.9
+
+</p>
+
+</div>
+<div class="container">
+
+        
+  <img src="images/image025.png" alt="Extras" width="300" height="300">
+<p>Here we are using <strong>trip_seconds, trip_seconds_sq, trip_miles and miles_sq</strong> for building the linear model.
+  <br><strong>The equation for fare would be
+  fare = 1.264e+00 + 1.010e-02 * trip_seconds - 7.686e-07 * trip_seconds_sq + 1.458e+00 * trip_miles - 3.223e-03 * miles_sq</strong><br>
+  The p value for Intercept is significantly large 0.2234, hence we fail to reject Null Hypothesis, due to
+  lack of evidence
+  and p value for trip_seconds_sq is 0.0765, 
+  Hence we reject the Null Hypothesis in this case due to lack of evidence<br>
+  The R-sq value is 0.9085 and Adj R-sq is 0.9032
+  
+</p>
+</div>
+    </section>
+
+
+<section>
+<div class="container">
+  <h2> LINE assumptions for the best model</h2>
+  <h3>Linearity</h3>
+  <img src="images/image024.png" alt="Extras" width="300" height="300">
+  <p>The "Actual v/s Fitted values" plot shows the points clustered near the lower tail
+    There are few outliers in the plot as well. Hence the plot is linear.    
+    </p>
+</div>
+
+<div class="container">
+<h3>Normality</h3>
+  <img src="images/image029.png" alt="Extras" width="300" height="300">
+  <p>The "P&O Normality Plot" plot shows that the points are normal in nature except some points
+    which are towards the upper tail i.e. increased residuals.
+    There are some outliers in the plot as well but the plot shows the points are normal in nature.
+    </p>
+</div>
+<div class="container">
+<h3>Equality of Variance</h3>
+  <img src="images/image030.png" alt="Extras" width="300" height="300">
+  <p>The "P&O Residuals" plot shows that the residuals are not equivalent to variance .
+    There are many outliers in the plot as well.
+    Hence we can say that the outliers do not affect the accuracy of the model
+    </p>
+</div>
+</section>
+
+<section>
+  <div class='container'>
+<h3>    Since there are a lot of outliers in the plot we check for leverage.
+We expell the points with high leverage </h3>
+
+<img src="images/image031.png" alt="Extras" width="300" height="300">
+  <p>From the plot we can see there are around 4 - 5 points which can be considered as outliers.
+    By using Which function, returns the indices of the logical object when it is TRUE.
+    </p>
+  
+
+<p>
+Using the following R code, we get the levrage points : <br>
+  leverage_points = which(leverage>3*mean(leverage)) <br>
+
+  Output:<br>
+  2 19 20 24 36<br>
+  <strong>There are 5 outliers, the points are '2, 19, 20, 24, 36' are out of the leverage level
+  here are the details of the points which are inappropriate for the model.</strong>
+ 
+  <img src="images/image024.png" alt="Extras" width="300" height="300">
+  <p>We can see we get the same values after removing the outliers even for R-sq = 0.9042 and Adj R-sq = 0.9, 
+    i.e. both the models are quite similar.<br>
+    
+  <strong>The equation for fare would be
+   fare = 2.6668736 + trip_seconds * 0.0064833 + trip_miles * 1.6087559 - miles_sq * 0.0035525 </strong>
+    
+  All the p values are significantly low hence we reject the null hypothesis
+    
+    </p>
+
+</p>
+
+<h2>Testing the model on a test set</h2>
+<img src="images/image032.png" alt="Extras" width="300" height="300">
+<p>
+  Using the best model on the new dataset, we get a R-sq = 0.9539 and Adj R-sq = 0.952.<br>
+The value for Intercept is 3.1029464 and its p value is 2.37e-06.<br>
+The value for trip_seconds is 0.0080489 and its p value is 7.98e-16.<br>
+The value for trip_miles is 1.1125162 and its p value is 7.22e-08<br>
+The value for trip_miles_sq is 0.0173281 and its p value is 0.00291 <br>
+Hence in all the cases, we Reject the Null Hypothesis.
+<strong>The equation for fare would be
+ fare = 3.1029464 + 0.0080489 * trip_seconds + 1.1125162 * trip_miles + 0.0173281 * trip_miles_sq</strong><br>
+If trip_seconds changes, fare changes by 0.0080489,
+If trip_miles changes, fare changes by 1.1125162,
+ If trip_seconds changes, fare changes by 0.0173281 
+
+</p>
+</div>
+
+</section>
+
+    <footer>
+      <p>Portfolio 2020</p>
+    </footer>
+  </body>
+</html>
